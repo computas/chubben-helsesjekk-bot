@@ -1,0 +1,1 @@
+{"version":3,"file":"edge-instrumentation.js","mappings":"0FAAO,eAAeA,IAItB","sources":["webpack://_N_E/./src/instrumentation.ts"],"sourcesContent":["export async function register(): Promise<void> {\r\n    if (process.env.NEXT_RUNTIME === 'nodejs') {\r\n        await require('pino')\r\n    }\r\n}\r\n"],"names":["register"],"sourceRoot":""}
