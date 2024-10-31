@@ -55,7 +55,7 @@ jobs:
             "${{ env.LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/aksjer/chubben-aksjer:${{ github.sha }}"
             "${{ env.LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/aksjer/chubben-aksjer:latest"
           build-args: |
-            GITHUB_PACKAGES_TOKEN=${{ secrets.GITHUB_PACKAGES_TOKEN }}
+            GP_TOKEN=${{ secrets.GP_TOKEN }}
             NEXT_PUBLIC_ENVIRONMENT=${{ github.event.inputs.environment }}
           provenance: false
 
