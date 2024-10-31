@@ -1,4 +1,4 @@
-// File: C:\Users\mabo\Documents\chubben\helsesjekk-bot\src\app\hva-er-helsesjekk\page.tsx
+// File: C:\Users\mabo\Documents\chubben\chubben-helsesjekk-bot\src\app\hva-er-helsesjekk\page.tsx
 import * as entry from '../../../../src/app/hva-er-helsesjekk/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

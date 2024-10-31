@@ -1,15 +1,8 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/api/internal/is_alive/route": "app/api/internal/is_alive/route.js",
-  "/admin/page": "app/admin/page.js",
-  "/api/internal/is_ready/restart/route": "app/api/internal/is_ready/restart/route.js",
   "/page": "app/page.js",
   "/hva-er-helsesjekk/page": "app/hva-er-helsesjekk/page.js",
-  "/api/internal/is_ready/route": "app/api/internal/is_ready/route.js",
-  "/kom-i-gang/page": "app/kom-i-gang/page.js",
-  "/global-helse/page": "app/global-helse/page.js",
-  "/team/[groupId]/[teamId]/graph/page": "app/team/[groupId]/[teamId]/graph/page.js",
   "/kom-i-gang/grupper/page": "app/kom-i-gang/grupper/page.js",
-  "/team/[groupId]/[teamId]/results/page": "app/team/[groupId]/[teamId]/results/page.js",
-  "/team/[groupId]/[teamId]/page": "app/team/[groupId]/[teamId]/page.js"
+  "/global-helse/page": "app/global-helse/page.js",
+  "/kom-i-gang/page": "app/kom-i-gang/page.js"
 }
