@@ -1,0 +1,85 @@
+name: Deploy Pipeline
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'main'
+        type: choice
+        options:
+          - test
+          - main
+
+env:
+  LOCATION: europe-west1
+  PROJECT_ID: chubben
+  CLUSTER_NAME: chubben
+  NAMESPACE: aksjer
+
+jobs:
+  Build-And-Deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+      actions: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: '${{ env.PROJECT_ID }}'
+          workload_identity_provider: 'projects/714619712093/locations/global/workloadIdentityPools/github/providers/chubben-provider'
+
+      - name: Configure Docker to use Google Cloud credentials
+        run: gcloud auth configure-docker ${{ env.LOCATION }}-docker.pkg.dev
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            "${{ env.LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/aksjer/chubben-aksjer:${{ github.sha }}"
+            "${{ env.LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/aksjer/chubben-aksjer:latest"
+          build-args: |
+            GITHUB_PACKAGES_TOKEN=${{ secrets.GITHUB_PACKAGES_TOKEN }}
+            NEXT_PUBLIC_ENVIRONMENT=${{ github.event.inputs.environment }}
+          provenance: false
+
+      - name: Connect To GKE Cluster
+        uses: google-github-actions/get-gke-credentials@v1
+        with:
+          cluster_name: ${{ env.CLUSTER_NAME }}
+          location: ${{ env.LOCATION }}
+          project_id: ${{ env.PROJECT_ID }}
+
+      - name: Update Kubernetes Deployment and Apply Resources
+        run: |
+          kubectl config set-context --current --namespace=${{ env.NAMESPACE }}
+
+          # Replace placeholder in deployment file with actual image name
+          sed -i "s,FULL_IMAGE_NAME,${{ env.LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/aksjer/chubben-aksjer:${{ github.sha }},g" k8s/deployment.yaml
+
+          # Create or update Kubernetes secret with necessary environment variables from GitHub secrets
+          kubectl create secret generic helsesjekk-secrets \
+            --from-literal=NAIS_DATABASE_HELSESJEKK_BOT_HELSESJEKK_BOT_URL=${{ secrets.NAIS_DATABASE_HELSESJEKK_BOT_HELSESJEKK_BOT_URL }} \
+            --from-literal=SLACK_SIGNING_SECRET=${{ secrets.SLACK_SIGNING_SECRET }} \
+            --from-literal=SLACK_BOT_TOKEN=${{ secrets.SLACK_BOT_TOKEN }} \
+            --from-literal=SLACK_APP_TOKEN=${{ secrets.SLACK_APP_TOKEN }} \
+            --dry-run=client -o yaml | kubectl apply -f -
+
+          # Apply the Kubernetes configuration
+          kubectl apply -f k8s/ --namespace=${{ env.NAMESPACE }}
