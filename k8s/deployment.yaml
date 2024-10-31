@@ -14,7 +14,7 @@ spec:
       labels:
         app: helsesjekk-bot
         criticality: '4'
-        alertThreshold: '50%'
+        alertThreshold: '60%'
         documentationURL: 'https://github/computas/chubben-helsesjekk-bot'
         githubRepo: 'https://github/computas/chubben-helsesjekk-bot'
         slackContact: '#innlogging'
