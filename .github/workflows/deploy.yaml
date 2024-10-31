@@ -19,7 +19,7 @@ env:
   LOCATION: europe-west1
   PROJECT_ID: chubben
   CLUSTER_NAME: chubben
-  NAMESPACE: aksjer
+  NAMESPACE: web
 
 jobs:
   Build-And-Deploy:
@@ -52,8 +52,8 @@ jobs:
           context: .
           push: true
           tags: |
-            "${{ env.LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/aksjer/chubben-aksjer:${{ github.sha }}"
-            "${{ env.LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/aksjer/chubben-aksjer:latest"
+            "${{ env.LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/web/chubben-helsesjekk-bot:${{ github.sha }}"
+            "${{ env.LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/web/chubben-helsesjekk-bot"
           build-args: |
             GP_TOKEN=${{ secrets.GP_TOKEN }}
             NEXT_PUBLIC_ENVIRONMENT=${{ github.event.inputs.environment }}
@@ -71,7 +71,7 @@ jobs:
           kubectl config set-context --current --namespace=${{ env.NAMESPACE }}
 
           # Replace placeholder in deployment file with actual image name
-          sed -i "s,FULL_IMAGE_NAME,${{ env.LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/aksjer/chubben-aksjer:${{ github.sha }},g" k8s/deployment.yaml
+          sed -i "s,FULL_IMAGE_NAME,${{ env.LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/web/chubben-helsesjekk-bot:${{ github.sha }},g" k8s/deployment.yaml
 
           # Create or update Kubernetes secret with necessary environment variables from GitHub secrets
           kubectl create secret generic helsesjekk-secrets \
