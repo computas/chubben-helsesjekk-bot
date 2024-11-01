@@ -55,6 +55,7 @@ jobs:
             --build-arg GITHUB_SHA="${GITHUB_SHA}" \
             --build-arg GITHUB_REF="${GITHUB_REF}" \
             --build-arg GP_TOKEN="${{ secrets.GP_TOKEN }}" \
+            --build-arg NEXT_PUBLIC_ENVIRONMENT="production" \
             .
 
           docker push "${DOCKER_TAG}"
