@@ -13,41 +13,16 @@ spec:
     metadata:
       labels:
         app: helsesjekk-bot
-        criticality: '4'
-        alertThreshold: '60%'
-        documentationURL: 'https://github/computas/chubben-helsesjekk-bot'
-        githubRepo: 'https://github/computas/chubben-helsesjekk-bot'
-        slackContact: '#innlogging'
-        onCallNotifications: 'disabled'
     spec:
       containers:
         - name: helsesjekk-bot
           image: FULL_IMAGE_NAME
-          ports:
-            - containerPort: 3000
           env:
             - name: NAIS_DATABASE_HELSESJEKK_BOT_HELSESJEKK_BOT_URL
-              valueFrom:
-                secretKeyRef:
-                  name: helsesjekk-db
-                  key: url
-            - name: SLACK_SIGNING_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: helsesjekk-slack
-                  key: signing-secret
-            - name: SLACK_BOT_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: helsesjekk-slack
-                  key: bot-token
-            - name: SLACK_APP_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: helsesjekk-slack
-                  key: app-token
-            - name: PRISMA_SCHEMA_DISABLE_ADVISORY_LOCK
-              value: 'true'
+              value: 'postgresql://postgres:postgres@localhost:5432/postgres'
+          envFrom:
+            - secretRef:
+                name: helsesjekk-bot
           resources:
             requests:
               memory: '512Mi'
@@ -55,19 +30,3 @@ spec:
             limits:
               memory: '512Mi'
               cpu: '256m'
-          readinessProbe:
-            httpGet:
-              path: /api/internal/is_ready
-              port: 3000
-            initialDelaySeconds: 15
-            periodSeconds: 5
-            successThreshold: 1
-            failureThreshold: 3
-          livenessProbe:
-            httpGet:
-              path: /api/internal/is_alive
-              port: 3000
-            initialDelaySeconds: 15
-            periodSeconds: 5
-            successThreshold: 2
-            failureThreshold: 3
