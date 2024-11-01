@@ -17,9 +17,6 @@ spec:
       containers:
         - name: helsesjekk-bot
           image: FULL_IMAGE_NAME
-          env:
-            - name: NAIS_DATABASE_HELSESJEKK_BOT_HELSESJEKK_BOT_URL
-              value: 'postgresql://postgres:postgres@localhost:5432/postgres'
           envFrom:
             - secretRef:
                 name: helsesjekk-bot
